@@ -2,27 +2,43 @@
 
 import sys
 
-def dfs(adj, used, order, x):
-    #write your code here
-    pass
+def add_edge(graph, vertex1, vertex2):
+    if vertex1 in graph:
+        graph[vertex1].append(vertex2)
+    else:
+        graph[vertex1] = vertex2
 
+def dfs(vertex, visited, visited_nodes, graph):
+    visited[vertex-1] = True
+    for neighbour in graph[vertex]:
+        if visited[neighbour-1] is False:
+            dfs(neighbour, visited, visited_nodes, graph)
+    visited_nodes.append(vertex)    
+    
+def topsort(adj):
+    num_of_nodes = len(graph)
+    visited = [False] * num_of_nodes
+    ordering = [0] * num_of_nodes
+    i = num_of_nodes - 1
 
-def toposort(adj):
-    used = [0] * len(adj)
-    order = []
-    #write your code here
-    return order
+    for vertex in graph:
+        if visited[vertex-1] is False:
+            visited_nodes = []
+            dfs(vertex, visited, visited_nodes, graph)
+            for node_id in visited_nodes:
+                ordering[i] = node_id
+                i = i - 1
+    return ordering
 
 if __name__ == '__main__':
-    input = sys.stdin.read()
-    data = list(map(int, input.split()))
-    n, m = data[0:2]
-    data = data[2:]
-    edges = list(zip(data[0:(2 * m):2], data[1:(2 * m):2]))
-    adj = [[] for _ in range(n)]
-    for (a, b) in edges:
-        adj[a - 1].append(b - 1)
-    order = toposort(adj)
-    for x in order:
-        print(x + 1, end=' ')
+    n, m = map(int, sys.stdin.readline().split())
+    graph = {vertex: [] for vertex in range(1, n+1)}
+    
+    for _ in range(m):
+        vert1, vert2 = map(int, sys.stdin.readline().split())
+        add_edge(graph, vert1, vert2)
+    in_order = (topsort(graph))
+
+    for x in in_order:
+        print(x, end=' ')
 
